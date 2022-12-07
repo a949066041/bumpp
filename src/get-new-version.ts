@@ -1,6 +1,7 @@
 import { bold, green } from 'kleur'
 import prompts from 'prompts'
 import { SemVer, valid as isValidVersion } from 'semver'
+import dayjs from 'dayjs'
 import type { BumpRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
@@ -70,9 +71,10 @@ function getNextVersions(oldVersion: string) {
   const next: Partial<Record<RULES, string>> = {}
 
   for (const type of ['年份', '主版本', '子版本号', '修订版本号'] as RULES[]) {
-    const oldList = oldVersion.split('.') as unknown as number[]
+    const oldList = oldVersion.split('.') as unknown as (number | string)[]
     const currentPoint = MX_RULES[type as RULES]
     oldList.splice(currentPoint, 1, Number(oldList[currentPoint]) + 1)
+    oldList.push(dayjs().format('MMDD') as string)
     next[type] = oldList.join('.')
   }
 

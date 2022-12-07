@@ -7,6 +7,7 @@ specifiers:
   '@types/prompts': ^2.0.14
   '@types/semver': ^7.3.8
   cac: ^6.7.12
+  dayjs: ^1.11.7
   detect-indent: ^7.0.0
   detect-newline: ^3.1.0
   eslint: ^8.8.0
@@ -24,6 +25,7 @@ specifiers:
 dependencies:
   '@jsdevtools/ez-spawn': 3.0.4
   cac: 6.7.12
+  dayjs: 1.11.7
   fast-glob: 3.2.11
   kleur: 4.1.4
   prompts: 2.4.2
@@ -977,6 +979,10 @@ packages:
     dependencies:
       array-find-index: 1.0.2
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /de-indent/1.0.2:
     resolution: {integrity: sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=}

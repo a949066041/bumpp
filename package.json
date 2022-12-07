@@ -59,6 +59,7 @@
   "dependencies": {
     "@jsdevtools/ez-spawn": "^3.0.4",
     "cac": "^6.7.12",
+    "dayjs": "^1.11.7",
     "fast-glob": "^3.2.11",
     "kleur": "^4.1.4",
     "prompts": "^2.4.1",
