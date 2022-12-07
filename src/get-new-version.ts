@@ -72,6 +72,8 @@ function getNextVersions(oldVersion: string) {
 
   for (const type of ['年份', '主版本', '子版本号', '修订版本号'] as RULES[]) {
     const oldList = oldVersion.split('.') as unknown as (number | string)[]
+    if (`${oldList[oldList.length - 1]}`.length === 4)
+      oldList.splice(oldList.length - 1, 1)
     const currentPoint = MX_RULES[type as RULES]
     oldList.splice(currentPoint, 1, Number(oldList[currentPoint]) + 1)
     oldList.push(dayjs().format('MMDD') as string)
