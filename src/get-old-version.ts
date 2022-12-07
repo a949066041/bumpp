@@ -1,4 +1,3 @@
-import { valid as isValidVersion } from 'semver'
 import { readJsonFile } from './fs'
 import { isManifest } from './manifest'
 import type { Operation } from './operation'
@@ -14,8 +13,8 @@ export async function getOldVersion(operation: Operation): Promise<Operation> {
   const filesToCheck = files.filter(file => file.endsWith('.json'))
 
   // Always check package.json
-  if (!filesToCheck.includes('package.json'))
-    filesToCheck.push('package.json')
+  if (!filesToCheck.includes('version.json'))
+    filesToCheck.push('version.json')
 
   // Check each file, in order, and return the first valid version number we find
   for (const file of filesToCheck) {
@@ -45,10 +44,8 @@ async function readVersion(file: string, cwd: string): Promise<string | undefine
   try {
     const { data: manifest } = await readJsonFile(file, cwd)
 
-    if (isManifest(manifest)) {
-      if (isValidVersion(manifest.version))
-        return manifest.version
-    }
+    if (isManifest(manifest))
+      return manifest.version
   }
   catch (error) {
     // Ignore errors (no such file, not valid JSON, etc.)

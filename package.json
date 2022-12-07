@@ -1,6 +1,6 @@
 {
-  "name": "bumpp",
-  "version": "8.2.1",
+  "name": "mx-bumpp",
+  "version": "1.0.0",
   "packageManager": "pnpm@7.2.1",
   "description": "Bump version, commit changes, tag, and push to Git",
   "author": {
@@ -36,7 +36,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "bumpp": "bin/bumpp.js"
+    "mx-bumpp": "bin/bumpp.js"
   },
   "files": [
     "bin",
@@ -52,9 +52,9 @@
     "watch": "npm run build -- --watch src",
     "start": "esno src/cli/run.ts",
     "upgrade": "npm-check -u && npm audit fix",
-    "bumpp": "esno src/cli/run.ts --tag --push --all",
+    "mx-bumpp": "esno src/cli/run.ts --tag --push --all",
     "prepublishOnly": "npm run clean && npm run build",
-    "release": "npm run bumpp && npm publish"
+    "release": "npm run mx-bumpp && npm publish"
   },
   "dependencies": {
     "@jsdevtools/ez-spawn": "^3.0.4",

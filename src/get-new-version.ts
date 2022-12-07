@@ -1,10 +1,10 @@
 import { bold, green } from 'kleur'
 import prompts from 'prompts'
-import semver, { SemVer, clean as cleanVersion, valid as isValidVersion } from 'semver'
-import type { BumpRelease, PromptRelease } from './normalize-options'
+import { SemVer, valid as isValidVersion } from 'semver'
+import type { BumpRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
-import { isPrerelease, releaseTypes } from './release-type'
+import { isPrerelease } from './release-type'
 
 /**
  * Determines the new version number, possibly by prompting the user for it.
@@ -54,22 +54,27 @@ function getNextVersion(oldVersion: string, bump: BumpRelease): string {
   return newSemVer.version
 }
 
+const MX_RULES = {
+  年份: 0,
+  主版本: 1,
+  子版本号: 2,
+  修订版本号: 3,
+}
+
+type RULES = keyof typeof MX_RULES
+
 /**
  * Returns the next version number for all release types.
  */
-function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType | 'next', string> {
-  const next: Record<string, string> = {}
+function getNextVersions(oldVersion: string) {
+  const next: Partial<Record<RULES, string>> = {}
 
-  const parse = semver.parse(oldVersion)
-  if (typeof parse?.prerelease[0] === 'string')
-    preid = parse?.prerelease[0] || 'preid'
-
-  for (const type of releaseTypes)
-    next[type] = semver.inc(oldVersion, type, preid)!
-
-  next.next = parse?.prerelease?.length
-    ? semver.inc(oldVersion, 'prerelease', preid)!
-    : semver.inc(oldVersion, 'patch')!
+  for (const type of ['年份', '主版本', '子版本号', '修订版本号'] as RULES[]) {
+    const oldList = oldVersion.split('.') as unknown as number[]
+    const currentPoint = MX_RULES[type as RULES]
+    oldList.splice(currentPoint, 1, Number(oldList[currentPoint]) + 1)
+    next[type] = oldList.join('.')
+  }
 
   return next
 }
@@ -81,9 +86,8 @@ function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType 
  */
 async function promptForNewVersion(operation: Operation): Promise<Operation> {
   const { oldVersion } = operation.state
-  const release = operation.options.release as PromptRelease
 
-  const next = getNextVersions(oldVersion, release.preid)
+  const next = getNextVersions(oldVersion)
 
   const PADDING = 13
   const answers = await prompts([
@@ -93,15 +97,10 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
       message: `Current version ${green(oldVersion)}`,
       initial: 'next',
       choices: [
-        { value: 'major', title: `${'major'.padStart(PADDING, ' ')} ${bold(next.major)}` },
-        { value: 'minor', title: `${'minor'.padStart(PADDING, ' ')} ${bold(next.minor)}` },
-        { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${bold(next.patch)}` },
-        { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${bold(next.next)}` },
-        { value: 'prepatch', title: `${'pre-patch'.padStart(PADDING, ' ')} ${bold(next.prepatch)}` },
-        { value: 'preminor', title: `${'pre-minor'.padStart(PADDING, ' ')} ${bold(next.preminor)}` },
-        { value: 'premajor', title: `${'pre-major'.padStart(PADDING, ' ')} ${bold(next.premajor)}` },
-        { value: 'none', title: `${'as-is'.padStart(PADDING, ' ')} ${bold(oldVersion)}` },
-        { value: 'custom', title: 'custom ...'.padStart(PADDING + 4, ' ') },
+        { value: '年份', title: `${'年份'.padStart(PADDING, ' ')} ${bold(next['年份'] || '')}` },
+        { value: '主版本', title: `${'主版本'.padStart(PADDING, ' ')} ${bold(next['主版本'] || '')}` },
+        { value: '子版本号', title: `${'子版本号'.padStart(PADDING, ' ')} ${bold(next['子版本号'] || '')}` },
+        { value: '修订版本号', title: `${'修订版本号'.padStart(PADDING, ' ')} ${bold(next['修订版本号'] || '')}` },
       ],
     },
     {
@@ -118,22 +117,5 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
     custom?: string
   }
 
-  const newVersion = answers.release === 'none'
-    ? oldVersion
-    : answers.release === 'custom'
-      ? cleanVersion(answers.custom!)!
-      : next[answers.release]
-
-  if (!newVersion)
-    process.exit(1)
-
-  switch (answers.release) {
-    case 'custom':
-    case 'next':
-    case 'none':
-      return operation.update({ newVersion })
-
-    default:
-      return operation.update({ release: answers.release, newVersion })
-  }
+  return operation.update({ newVersion: next[answers.release as RULES] })
 }

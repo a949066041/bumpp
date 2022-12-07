@@ -2,7 +2,7 @@ import { valid as isValidVersion } from 'semver'
 import cac from 'cac'
 import { isReleaseType } from '../release-type'
 import type { VersionBumpOptions } from '../types/version-bump-options'
-import { version } from '../../package.json'
+import { version } from '../../version.json'
 import { ExitCode } from './exit-code'
 
 /**
@@ -20,7 +20,7 @@ export interface ParsedArgs {
  */
 export function parseArgs(): ParsedArgs {
   try {
-    const cli = cac('bumpp')
+    const cli = cac('mx-bumpp')
 
     cli
       .version(version)
