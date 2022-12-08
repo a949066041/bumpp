@@ -1,6 +1,6 @@
 {
   "name": "mx-bumpp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packageManager": "pnpm@7.2.1",
   "description": "Bump version, commit changes, tag, and push to Git",
   "author": {
