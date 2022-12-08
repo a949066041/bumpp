@@ -95,7 +95,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     commit = { all, noVerify, message: raw.commit }
 
   else if (raw.commit || tag || push)
-    commit = { all, noVerify, message: 'chore: release v' }
+    commit = { all, noVerify, message: '【变更内容】:更新版本号 release v' }
 
   const files = await fg(
     raw.files?.length

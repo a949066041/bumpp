@@ -57,7 +57,7 @@ export async function versionBump(arg: VersionBumpOptions | string = {}): Promis
     if (!await prompts({
       name: 'yes',
       type: 'confirm',
-      message: 'Bump?',
+      message: '是否执行更新版本号',
       initial: true,
     }).then(r => r.yes))
       process.exit(1)
