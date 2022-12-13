@@ -76,6 +76,8 @@ function getNextVersions(oldVersion: string) {
       oldList.splice(oldList.length - 1, 1)
     const currentPoint = MX_RULES[type as RULES]
     oldList.splice(currentPoint, 1, Number(oldList[currentPoint]) + 1)
+    for (let i = 1; i <= 3 - currentPoint; i++)
+      oldList.splice(currentPoint + i, 1, 0)
     oldList.push(dayjs().format('MMDD') as string)
     next[type] = oldList.join('.')
   }
